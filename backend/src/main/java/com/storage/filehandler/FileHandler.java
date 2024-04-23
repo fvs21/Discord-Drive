@@ -3,6 +3,7 @@ package com.storage.filehandler;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,17 +14,15 @@ public class FileHandler {
         byte[] byteArr = file.getBytes();
         ArrayList<byte[]> splittedBytes = new ArrayList<>();
         ArrayList<FileUpload> splittedFiles = new ArrayList<>();
-
         if(byteArr.length / 1e6 > 25) {
             int numberOfChunks = (int) (byteArr.length / 1e6) / 25; //because file size limit is 25mb (rounded down)
-            double remainder = byteArr.length % fileSize;
 
-            for(int i = 0; i<(int) numberOfChunks; i++)  {
-                byte[] subArr = Arrays.copyOfRange(byteArr, i*fileSize, (i+1)*(fileSize)-1);
+            for(int i = 0; i<numberOfChunks; i++)  {
+                byte[] subArr = Arrays.copyOfRange(byteArr, i*fileSize, (i+1)*(fileSize));
                 splittedBytes.add(subArr);
             }
 
-            splittedBytes.add(Arrays.copyOfRange(byteArr, numberOfChunks*fileSize, numberOfChunks* fileSize + (int) remainder));
+            splittedBytes.add(Arrays.copyOfRange(byteArr, numberOfChunks*fileSize, byteArr.length));
         }
         else {
             splittedBytes.add(byteArr);
@@ -40,7 +39,11 @@ public class FileHandler {
         FileUpload file = FileUpload.fromData(bytes, fileName);
         return file;
     }
-    public static void mergeFile(ArrayList<byte[]> splittedBytes) {
-        //TODO
+    public static byte[] mergeFile(ArrayList<byte[]> splittedBytes, long fileSize) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        for(byte[] bytes : splittedBytes) {
+            outputStream.write(bytes);
+        }
+        return outputStream.toByteArray();
     }
 }

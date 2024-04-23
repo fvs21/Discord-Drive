@@ -1,12 +1,12 @@
 package com.storage.backend.file;
 
-import com.storage.discord.DiscordFileBot;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -21,12 +21,13 @@ public class FileController {
     }
 
     @GetMapping
-    public List<File> getFileUploads() {
+    @JsonView(value = Views.ExternalView.class)
+    public ResponseEntity<List<File>> getFileUploads() {
         return fileService.getFileUploads();
     }
 
     @PostMapping
-    public String postFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<String> postFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
         return fileService.handleFileUpload(file);
     }
 }
