@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+
 @SpringBootApplication
 @RestController
 public class BackendApplication {
@@ -15,7 +16,10 @@ public class BackendApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/**").allowedOrigins("*");
+				registry
+						.addMapping("/**")
+						.allowedOrigins("http://localhost:8080/")
+						.allowedMethods("GET", "POST", "DELETE", "OPTIONS");
 			}
 		};
 	}

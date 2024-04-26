@@ -71,4 +71,8 @@ public class FileService {
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .body(resource);
     }
+    public ResponseEntity<String> deleteFile(String fileName) {
+        long deleted = this.fileRepository.removeByfileName(fileName);
+        return new ResponseEntity<>("Deleted", HttpStatus.OK);
+    }
 }

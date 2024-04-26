@@ -4,10 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 @RestController
 @RequestMapping(path = "api/v1/files/{fileName}")
@@ -22,5 +20,9 @@ public class FileRetrieverController {
     @GetMapping
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) throws IOException {
         return this.fileService.makeFileResponseEntity(fileName);
+    }
+    @DeleteMapping
+    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
+        return this.fileService.deleteFile(fileName);
     }
 }

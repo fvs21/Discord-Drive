@@ -18,9 +18,17 @@
       <h2>Files</h2>
       <div class="files-container">
         <div v-for="item in files" v-bind:key="item" class="files-item">
-          <h3>{{ item.fileName }}</h3>
-          <div class="fields">
-            <span>Size: {{ readableFileSize(item.fileSize) }}</span>
+          <button class="deleteButton" @click="deleteFile(item.fileName)">
+            <h3>&#128465;</h3>
+          </button>
+          <br>
+          <h3>
+            {{ item.fileName }}
+          </h3>
+          <div>
+            <span>
+              Size: {{ readableFileSize(item.fileSize) }}
+            </span>
           </div>
           <div>
             <button class="downloadButton" @click="downloadFile(item.fileName)">Download</button>
@@ -64,7 +72,7 @@ async function uploadFile() {
   const formData = new FormData();
   formData.append("file", file.value);
   
-  const response = await axios.post("http://localhost:8080/api/v1/files", formData);
+  const response = await axios.post("http://localhost:8000/api/v1/files", formData);
   if(response.status == 201) {
     file.value = ref(null);
     fileName.value = "";
@@ -74,7 +82,7 @@ async function uploadFile() {
 }
 
 async function getFiles() {
-  const response = await axios.get("http://localhost:8080/api/v1/files");
+  const response = await axios.get("http://localhost:8000/api/v1/files");
   console.log(response);
 
   files.value = response.data;
@@ -86,7 +94,7 @@ async function downloadFile(fileName) {
     loading: true
   };
   const response = await axios({
-    url: "http://localhost:8080/api/v1/files/" + fileName,
+    url: "http://localhost:8000/api/v1/files/" + fileName,
     method: 'GET',
     responseType: 'blob'
   });
@@ -103,6 +111,12 @@ async function downloadFile(fileName) {
     URL.revokeObjectURL(href);
     loading.value = {};
   }
+}
+
+async function deleteFile(fileName) {
+  const response = await axios.delete("http://localhost:8000/api/v1/files/"+fileName);
+  console.log(response);
+  getFiles();
 }
 
 function readableFileSize(size) {
@@ -176,6 +190,8 @@ input[type="file"] {
   background-color: #ebedf0;
   border-radius: 6px;
   padding-top: 20px;
+  padding: 5px;
+  position: relative;
 }
 .downloadButton {
   background-color: #1442cd;
@@ -188,5 +204,15 @@ input[type="file"] {
   font-size: 16px;
   border-radius: 6px;
   cursor: pointer;
+}
+.deleteButton {
+  background-color: ebedf0;
+  border: none;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  position: absolute;
+  top: 0px;
+  right: 10px;
 }
 </style>
