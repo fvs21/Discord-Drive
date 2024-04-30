@@ -27,7 +27,7 @@ public class FileController {
     }
 
     @PostMapping
-    public ResponseEntity<String> postFileUpload(@RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<String> postFileUpload(@RequestParam("file") MultipartFile file) throws Exception {
         return fileService.handleFileUpload(file);
     }
 }

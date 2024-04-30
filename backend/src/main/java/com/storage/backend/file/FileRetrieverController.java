@@ -18,7 +18,7 @@ public class FileRetrieverController {
     }
 
     @GetMapping
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) throws IOException {
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) throws Exception {
         return this.fileService.makeFileResponseEntity(fileName);
     }
     @DeleteMapping

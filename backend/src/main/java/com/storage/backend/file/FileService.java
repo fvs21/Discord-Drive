@@ -32,13 +32,13 @@ public class FileService {
         return ResponseEntity.status(HttpStatus.OK).body(this.fileRepository.findAll());
     }
 
-    public ResponseEntity<String> handleFileUpload(MultipartFile file) throws IOException {
+    public ResponseEntity<String> handleFileUpload(MultipartFile file) throws Exception {
         List<Long> ids = discordBot.sendFile(file);
         File fileModel = new File(file.getOriginalFilename(), file.getSize(), ids);
         this.fileRepository.save(fileModel);
         return new ResponseEntity<>("Success", HttpStatus.CREATED);
     }
-    public byte[] retrieveFile(String fileName) throws IOException {
+    public byte[] retrieveFile(String fileName) throws Exception {
         File fileModel = this.fileRepository.findByfileName(fileName);
         List<Long> ids = fileModel.getMessage_ids();
 
@@ -56,7 +56,7 @@ public class FileService {
         }
         return FileHandler.mergeFile(byteArr, fileModel.getFileSize());
     }
-    public ResponseEntity<Resource> makeFileResponseEntity(String fileName) throws IOException {
+    public ResponseEntity<Resource> makeFileResponseEntity(String fileName) throws Exception {
         byte[] mergedFileBytes = this.retrieveFile(fileName);
         ByteArrayResource resource = new ByteArrayResource(mergedFileBytes);
         HttpHeaders headers = new HttpHeaders();

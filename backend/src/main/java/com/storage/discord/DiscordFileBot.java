@@ -23,7 +23,7 @@ public class DiscordFileBot {
                 .setActivity(Activity.playing("Storing"))
                 .build();
     }
-    public List<Long> sendFile(MultipartFile file) throws IOException {
+    public List<Long> sendFile(MultipartFile file) throws Exception {
         ArrayList<FileUpload> files = FileHandler.splitFile(file, file.getOriginalFilename());
         List<Long> ids = new ArrayList<>();
         for(FileUpload fileUpload : files) {

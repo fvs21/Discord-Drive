@@ -74,7 +74,7 @@ async function uploadFile() {
   
   const response = await axios.post("http://localhost:8000/api/v1/files", formData);
   if(response.status == 201) {
-    file.value = ref(null);
+    file.value = null;
     fileName.value = "";
     successMessage.value = "File uploaded!";
     getFiles();

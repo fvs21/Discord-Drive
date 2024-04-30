@@ -1,17 +1,21 @@
 package com.storage.filehandler;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.security.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class FileHandler {
     private static final int fileSize = 25*1048576;
-    public static ArrayList<FileUpload> splitFile(MultipartFile file, String fileName) throws IOException {
-        byte[] byteArr = file.getBytes();
+    public static ArrayList<FileUpload> splitFile(MultipartFile file, String fileName) throws Exception {
+        byte[] byteArr = encryptBytes(file.getBytes());
         ArrayList<byte[]> splittedBytes = new ArrayList<>();
         ArrayList<FileUpload> splittedFiles = new ArrayList<>();
         if(byteArr.length / 1e6 > 25) {
@@ -22,7 +26,9 @@ public class FileHandler {
                 splittedBytes.add(subArr);
             }
 
-            splittedBytes.add(Arrays.copyOfRange(byteArr, numberOfChunks*fileSize, byteArr.length));
+            splittedBytes.add(
+                    Arrays.copyOfRange(byteArr, numberOfChunks*fileSize, byteArr.length)
+            );
         }
         else {
             splittedBytes.add(byteArr);
@@ -39,11 +45,33 @@ public class FileHandler {
         FileUpload file = FileUpload.fromData(bytes, fileName);
         return file;
     }
-    public static byte[] mergeFile(ArrayList<byte[]> splittedBytes, long fileSize) throws IOException {
+    public static byte[] mergeFile(ArrayList<byte[]> splittedBytes, long fileSize) throws Exception {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         for(byte[] bytes : splittedBytes) {
             outputStream.write(bytes);
         }
-        return outputStream.toByteArray();
+        return decryptBytes(outputStream.toByteArray());
+    }
+
+    private static byte[] encryptBytes(byte[] fileBytes) throws Exception {
+        String secretKey = Dotenv.load().get("secret_key");
+
+        SecretKey key = new SecretKeySpec(secretKey.getBytes(), "AES");
+
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, key);
+
+        return cipher.doFinal(fileBytes);
+    }
+
+    private static byte[] decryptBytes(byte[] encryptedBytes) throws Exception {
+        String secretKey = Dotenv.load().get("secret_key");
+
+        SecretKey key = new SecretKeySpec(secretKey.getBytes(), "AES");
+
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.DECRYPT_MODE, key);
+
+        return cipher.doFinal(encryptedBytes);
     }
 }
