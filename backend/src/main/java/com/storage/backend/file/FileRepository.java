@@ -6,8 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
-    File findByfileName(String fileName);
+    File findByfileName(String fileName); //method to find file by fileName;
 
     @Transactional
-    long removeByfileName(String fileName);
+    long removeByfileName(String fileName); //method to remove file by fileName;
 }

@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +53,7 @@ public class FileService {
             byteArr.add(bytes);
             file.delete();
         }
-        return FileHandler.mergeFile(byteArr, fileModel.getFileSize());
+        return FileHandler.mergeFile(byteArr);
     }
     public ResponseEntity<Resource> makeFileResponseEntity(String fileName) throws Exception {
         byte[] mergedFileBytes = this.retrieveFile(fileName);
