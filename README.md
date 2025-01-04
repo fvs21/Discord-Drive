@@ -30,4 +30,4 @@ mvn spring-boot:run
 ### Client
 1. Navigate to the frontend directory.
 2. Run npm install
-3. Run npm run dev
+3. Run npm run serve
