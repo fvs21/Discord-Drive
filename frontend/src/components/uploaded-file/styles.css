@@ -1,0 +1,48 @@
+.uploaded-file {
+    width: 100%;
+    padding: 14px 20px;
+    text-align: left;
+    background-color: white;
+    color: black;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-bottom: 1px solid rgb(217, 217, 217);
+}
+
+.file-info {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.file-size {
+    color: gray;
+}
+
+.uploaded-file:first-child {
+    border-top: 1px solid rgb(217, 217, 217);
+}
+
+.uploaded-file:hover {
+    background-color: rgb(228, 228, 228);
+}
+
+.delete-file-btn {
+    background-color: transparent;
+    transition: 0.1s;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    color: black;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-file-btn:hover {
+    background-color: rgb(198, 198, 198);
+}

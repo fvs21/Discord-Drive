@@ -1,5 +1,6 @@
 package com.storage.backend.file;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import java.util.List;
@@ -18,14 +19,15 @@ public class File {
             strategy = GenerationType.SEQUENCE,
             generator = "discord_storage_sequence"
     )
+    @JsonView({Views.ExternalView.class})
     private Long id;
 
-    @JsonView(Views.ExternalView.class)
+    @JsonView({Views.ExternalView.class})
     private String fileName;
-    @JsonView(Views.ExternalView.class)
+    @JsonView({Views.ExternalView.class})
     private long fileSize;
 
-    @JsonView({Views.InternalView.class})
+    @JsonIgnore
     @ElementCollection
     private List<Long> message_ids;
 

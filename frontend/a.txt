@@ -1,0 +1,74 @@
+function addedFile(event) {
+  fileName.value = event.target.files[0].name;
+  file.value = event.target.files[0];
+  console.log(file.value);
+}
+
+async function uploadFile() {
+  if(file.value == null) {
+    errorMessage.value = "File not selected";
+    return;
+  } else {
+    errorMessage.value = "";
+  }
+  console.log(file.value)
+  
+  const formData = new FormData();
+  formData.append("file", file.value);
+  
+  const response = await axios.post("http://localhost:8000/api/v1/files", formData);
+  if(response.status == 201) {
+    file.value = null;
+    fileName.value = "";
+    successMessage.value = "File uploaded!";
+    getFiles();
+  }
+}
+
+async function getFiles() {
+  const response = await axios.get("http://localhost:8000/api/v1/files");
+  console.log(response);
+
+  files.value = response.data;
+}
+
+async function downloadFile(fileName) {
+  loading.value = {
+    name: fileName,
+    loading: true
+  };
+  const response = await axios({
+    url: "http://localhost:8000/api/v1/files/" + fileName,
+    method: 'GET',
+    responseType: 'blob'
+  });
+  if(response.status == 200) {
+    const href = URL.createObjectURL(response.data);
+    const link = document.createElement('a');
+    link.href = href;
+
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+    loading.value = {};
+  }
+}
+
+async function deleteFile(fileName) {
+  const response = await axios.delete("http://localhost:8000/api/v1/files/"+fileName);
+  console.log(response);
+  getFiles();
+}
+
+function readableFileSize(size) {
+    var units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    var i = 0;
+    while(size >= 1024) {
+        size /= 1024;
+        ++i;
+    }
+    return size.toFixed(1) + ' ' + units[i];
+}
