@@ -1,6 +1,5 @@
 package com.storage.discord;
 
-import com.storage.filehandler.FileHandler;
 import io.github.cdimascio.dotenv.Dotenv;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -8,7 +7,6 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.utils.AttachmentProxy;
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,16 +14,15 @@ import java.util.List;
 
 public class DiscordFileBot {
     private final JDA bot;
-    private final Dotenv dotenv  = Dotenv.load(); // load .env file
+    private final Dotenv dotenv = Dotenv.load(); // load .env file
     public DiscordFileBot() {
         //create discord bot with JDA (Java discord api)
         this.bot = JDABuilder.createDefault(this.dotenv.get("discord_token"))
                 .setActivity(Activity.playing("Storing"))
                 .build();
     }
-    public List<Long> sendFile(MultipartFile file) throws Exception {
+    public List<Long> sendFile(ArrayList<FileUpload> files) throws Exception {
         //get splitted files
-        ArrayList<FileUpload> files = FileHandler.splitFile(file, file.getOriginalFilename());
         List<Long> ids = new ArrayList<>(); //discord message ids list to store in db and later retrieve them
         for(FileUpload fileUpload : files) {
             //send file to discord private server
