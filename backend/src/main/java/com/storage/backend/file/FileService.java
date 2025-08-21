@@ -29,7 +29,7 @@ public class FileService {
     private final FileRepository fileRepository;
 
     //maximum discord's individual file size limit
-    private static final int fileSize = 25*1048576; //25 mb
+    private static final int fileSize = 8*1048576; //8 mb
 
     @Autowired
     public FileService(FileRepository fileRepository) {
@@ -90,12 +90,12 @@ public class FileService {
         byte[] byteArr = encryptBytes(file.getBytes());
         ArrayList<byte[]> splittedBytes = new ArrayList<>(); //arraylist to store the 25 mb file chunks bytes
 
-        // arraylist to store the 25 mb file chunks to send to the discord server. Stores FileUpload object which
+        // arraylist to store the 8 mb file chunks to send to the discord server. Stores FileUpload object which
         // is compatible with discord's api
         ArrayList<FileUpload> splittedFiles = new ArrayList<>();
 
-        //check if file size is greater than 25 mb
-        if(byteArr.length / 1048576 > 25) {
+        //check if file size is greater than 8 mb
+        if(byteArr.length / 1048576 > 8) {
             int numberOfChunks = (int) (byteArr.length / 1e6) / 25; // rounded down
             for(int i = 0; i<numberOfChunks; i++)  {
                 //storing 25 mb chunks of the file in a sub array and adding it to the splittedBytes arraylist
