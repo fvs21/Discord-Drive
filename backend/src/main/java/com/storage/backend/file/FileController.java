@@ -3,6 +3,7 @@ package com.storage.backend.file;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,21 +24,21 @@ public class FileController {
 
     @GetMapping
     @JsonView(value = Views.ExternalView.class)
-    public ResponseEntity<List<File>> getFileUploads() {
+    public List<File> getFileUploads() {
         return fileService.getFileUploads();
     }
 
     @PostMapping
-    public ResponseEntity<String> postFileUpload(@RequestParam("file") MultipartFile file) throws Exception {
-        return fileService.handleFileUpload(file);
+    public ResponseEntity<File> postFileUpload(@RequestParam("file") MultipartFile file) throws Exception {
+        return ResponseEntity.status(201).body(fileService.handleFileUpload(file));
     }
 
-    @GetMapping("/{fileName}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) throws Exception {
-        return this.fileService.makeFileResponseEntity(fileName);
+    @GetMapping("/{id}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long id) throws Exception {
+        return this.fileService.makeFileResponseEntity(id);
     }
-    @DeleteMapping("/{fileName}")
-    public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
-        return this.fileService.deleteFile(fileName);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteFile(@PathVariable Long id) {
+        return this.fileService.deleteFile(id);
     }
 }

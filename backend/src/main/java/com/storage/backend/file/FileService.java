@@ -36,19 +36,18 @@ public class FileService {
         this.fileRepository = fileRepository;
         this.discordBot = new DiscordFileBot();
     }
-    public ResponseEntity<List<File>> getFileUploads() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.fileRepository.findAll());
+    public List<File> getFileUploads() {
+        return this.fileRepository.findAllByOrderByIdDesc();
     }
 
-    public ResponseEntity<String> handleFileUpload(MultipartFile file) throws Exception {
+    public File handleFileUpload(MultipartFile file) throws Exception {
         ArrayList<FileUpload> fileUploads = splitFile(file, file.getOriginalFilename());
         List<Long> ids = discordBot.sendFile(fileUploads);
         File fileModel = new File(file.getOriginalFilename(), file.getSize(), ids);
-        this.fileRepository.save(fileModel);
-        return new ResponseEntity<>("Success", HttpStatus.CREATED);
+        return this.fileRepository.save(fileModel);
     }
-    public byte[] retrieveFile(String fileName) throws Exception {
-        File fileModel = this.fileRepository.findByfileName(fileName);
+    public byte[] retrieveFile(File fileModel) throws Exception {
+        String fileName = fileModel.getFileName();
         List<Long> ids = fileModel.getMessage_ids();
 
         ArrayList<byte[]> byteArr = new ArrayList<>();
@@ -65,11 +64,12 @@ public class FileService {
         }
         return mergeFile(byteArr);
     }
-    public ResponseEntity<Resource> makeFileResponseEntity(String fileName) throws Exception {
-        byte[] mergedFileBytes = this.retrieveFile(fileName);
+    public ResponseEntity<Resource> makeFileResponseEntity(Long id) throws Exception {
+        File fileModel = this.fileRepository.findById(id).orElseThrow();
+        byte[] mergedFileBytes = this.retrieveFile(fileModel);
         ByteArrayResource resource = new ByteArrayResource(mergedFileBytes);
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileName);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+fileModel.getFileName());
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
@@ -80,8 +80,8 @@ public class FileService {
                 .contentType(MediaType.parseMediaType("application/octet-stream"))
                 .body(resource);
     }
-    public ResponseEntity<String> deleteFile(String fileName) {
-        long deleted = this.fileRepository.removeByfileName(fileName);
+    public ResponseEntity<String> deleteFile(Long id) {
+        this.fileRepository.removeById(id);
         return new ResponseEntity<>("Deleted", HttpStatus.OK);
     }
 

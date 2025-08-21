@@ -1,0 +1,19 @@
+.drive-container {
+    background-color: white;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.drive-hover {
+    background-color: rgb(202, 219, 255);
+    outline: 2px solid rgb(51, 105, 214);
+}
+
+.uploaded-files {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
+    padding-top: 0.75rem;
+}
